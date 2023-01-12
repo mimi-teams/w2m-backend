@@ -32,15 +32,7 @@ public class EventResponseDto implements Serializable {
 
     public static EventResponseDto of(Event entity, Set<ParticipleTime> selectableParticipleTime) {
         final var responseDto = new EventResponseDto();
-        responseDto.event = EventDto.builder()
-                .id(entity.getId())
-                .hostId(entity.getHost()
-                        .getId())
-                .title(entity.getTitle())
-                .dDay(entity.getDDay())
-                .color(entity.getColor())
-                .description(entity.getDescription())
-                .build();
+        responseDto.event = EventDto.of(entity);
         responseDto.selectableParticipleTimes = SelectableParticipleTimeDto.of(selectableParticipleTime);
 
         return responseDto;

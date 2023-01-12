@@ -29,6 +29,7 @@ import java.util.UUID;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final CalendarRepository calendarRepository;
     private final EventRepository eventRepository;
     private final EventParticipantRepository eventParticipantRepository;
     private final EventParticipantAbleTimeRepository eventParticipantAbleTimeRepository;
@@ -69,7 +70,7 @@ public class UserService {
     public void deleteReal(UUID userId) throws EntityNotFoundException {
         final var user = getUser(userId);
         final var eventsCreatedByUser = eventRepository.findAllByHost(user);
-        eventsCreatedByUser.forEach((Event event)-> {
+        eventsCreatedByUser.forEach((Event event) -> {
             eventSelectableParticipleTimeRepository.deleteByEvent(event);
             final var participants = eventParticipantRepository.findAllInEvent(event);
             eventParticipantAbleTimeRepository.deleteByEventParticipantList(participants);
@@ -77,6 +78,7 @@ public class UserService {
             guestRepository.deleteAll(guestRepository.findAllByEvent(event));
         });
         eventRepository.deleteAll(eventsCreatedByUser);
+        calendarRepository.deleteByUser(user);
         userRepository.delete(user);
     }
 

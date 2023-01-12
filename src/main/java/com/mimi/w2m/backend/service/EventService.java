@@ -1,14 +1,15 @@
 package com.mimi.w2m.backend.service;
 
 import com.mimi.w2m.backend.config.exception.EntityNotFoundException;
+import com.mimi.w2m.backend.config.exception.InvalidValueException;
 import com.mimi.w2m.backend.domain.Event;
+import com.mimi.w2m.backend.domain.EventParticipant;
 import com.mimi.w2m.backend.domain.EventSelectableParticipleTime;
 import com.mimi.w2m.backend.domain.type.ParticipleTime;
+import com.mimi.w2m.backend.domain.type.TimeRange;
+import com.mimi.w2m.backend.dto.event.EventActivityTimeDto;
 import com.mimi.w2m.backend.dto.event.EventRequestDto;
-import com.mimi.w2m.backend.repository.EventParticipantRepository;
-import com.mimi.w2m.backend.repository.EventRepository;
-import com.mimi.w2m.backend.repository.EventSelectableParticipleTimeRepository;
-import com.mimi.w2m.backend.repository.GuestRepository;
+import com.mimi.w2m.backend.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,12 +33,14 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class EventService {
-    private final Logger logger = LoggerFactory.getLogger(EventService.class.getName());
-    private final UserService userService;
-    private final EventRepository eventRepository;
-    private final EventSelectableParticipleTimeRepository eventSelectableParticipleTimeRepository;
-    private final GuestRepository guestRepository;
-    private final EventParticipantRepository eventParticipantRepository;
+    protected final Logger logger = LoggerFactory.getLogger(EventService.class.getName());
+    protected final UserService userService;
+    protected final EventRepository eventRepository;
+    protected final EventSelectableParticipleTimeRepository eventSelectableParticipleTimeRepository;
+    protected final GuestRepository guestRepository;
+    protected final EventParticipantRepository eventParticipantRepository;
+    protected final EventParticipantAbleTimeRepository eventParticipantAbleTimeRepository;
+    protected final CalendarRepository calendarRepository;
 
     /**
      * 이벤트 생성(Host 는 EventParticipant 에 추가된다)
@@ -49,6 +52,7 @@ public class EventService {
     public Event createEvent(UUID hostId, EventRequestDto requestDto) throws EntityNotFoundException {
         final var host = userService.getUser(hostId);
         final var event = eventRepository.save(requestDto.to(host));
+        eventParticipantRepository.save(EventParticipant.ofUser(event, host));
 
         final var selectableParticipleTimes = EventSelectableParticipleTime.of(event, requestDto.getSelectableParticipleTimes().toParticipleTimeSet());
         eventSelectableParticipleTimeRepository.saveAll(selectableParticipleTimes);
@@ -113,6 +117,8 @@ public class EventService {
     public void delete(UUID eventId) throws EntityNotFoundException {
         final var event = getEvent(eventId);
 
+        calendarRepository.deleteByEvent(event);
+        eventParticipantAbleTimeRepository.deleteByEventParticipantList(eventParticipantRepository.findAllInEvent(event));
         eventParticipantRepository.deleteByEvent(event);
         guestRepository.deleteByEvent(event);
         eventSelectableParticipleTimeRepository.deleteByEvent(event);
@@ -157,7 +163,50 @@ public class EventService {
         }
     }
 
+    @Transactional
     public void deleteAll(List<Event> events) {
         eventRepository.deleteAll(events);
+    }
+
+    @Transactional
+    public Event modifyActivity(UUID eventId, EventActivityTimeDto requestDto) throws InvalidValueException {
+        final var event = getEvent(eventId);
+        if (Objects.isNull(requestDto.activityTime())) {
+            throw new InvalidValueException("[EventService] Empty activityTime", "선택된 활동 시간이 없습니다");
+        }
+        if (Objects.isNull(requestDto.activityTime().getSelectedDayOfWeeks())) {
+            throw new InvalidValueException("[EventService] Empty selected days", "선택된 요일이 없습니다");
+        }
+        final var days = requestDto.activityTime().getSelectedDayOfWeeks();
+        final var timeRange = new TimeRange(requestDto.activityTime().getBeginTime(), requestDto.activityTime().getEndTime());
+
+        //Selectable Range 와 비교
+        final var selectableRange = eventSelectableParticipleTimeRepository.findByEvent(event);
+        boolean isValid = false;
+        for (final var day : days) {
+            isValid = false;
+            for (final var selectable : selectableRange) {
+                if (day.equals(selectable.getWeek())) {
+                    for (final var time :
+                            selectable.getTimeRanges()) {
+                        if (timeRange.beginTime().isAfter(time.beginTime()) &&
+                                timeRange.beginTime().isBefore(time.endTime()) &&
+                                timeRange.endTime().isAfter(time.beginTime()) &&
+                                timeRange.endTime().isBefore(time.endTime())) {
+                            isValid = true;
+                            break;
+                        }
+                    }
+                }
+                if (isValid) {
+                    break;
+                }
+            }
+        }
+        if (!isValid) {
+            throw new InvalidValueException("[EventService] Activity Range doesn't match with Selectable", "설정 가능한 시간 범위를 초과합니다");
+        } else {
+            return event.setActivityTime(days, TimeRange.fixOrder(timeRange));
+        }
     }
 }

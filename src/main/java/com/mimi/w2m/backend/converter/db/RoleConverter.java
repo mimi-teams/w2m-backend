@@ -5,6 +5,7 @@ import com.mimi.w2m.backend.domain.type.Role;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
+import java.util.Objects;
 
 /**
  * RoleConverter
@@ -18,12 +19,14 @@ public class RoleConverter implements AttributeConverter<Role, String> {
 
     @Override
     public String convertToDatabaseColumn(Role attribute) {
-        return attribute.getKey();
+        return Objects.isNull(attribute) ? Role.GUEST.getKey() : attribute.getKey();
     }
 
     @Override
     public Role convertToEntityAttribute(String dbData) throws InvalidValueException {
-        if (dbData.equals(Role.GUEST.getKey())) {
+        if (Objects.isNull(dbData)) {
+            throw new InvalidValueException("Null role");
+        } else if (dbData.equals(Role.GUEST.getKey())) {
             return Role.GUEST;
         } else if (dbData.equals(Role.USER.getKey())) {
             return Role.USER;

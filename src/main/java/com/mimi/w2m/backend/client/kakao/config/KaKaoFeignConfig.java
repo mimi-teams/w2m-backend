@@ -1,4 +1,4 @@
-package com.mimi.w2m.backend.client.kakao;
+package com.mimi.w2m.backend.client.kakao.config;
 
 import com.mimi.w2m.backend.config.exception.BadGatewayException;
 import com.mimi.w2m.backend.config.exception.InvalidValueException;

@@ -1,6 +1,6 @@
 package com.mimi.w2m.backend.dto.auth;
 
-import com.mimi.w2m.backend.client.kakao.dto.KakaoUserInfoResponse;
+import com.mimi.w2m.backend.client.kakao.dto.user.KakaoUserInfoResponse;
 import lombok.Builder;
 import lombok.Getter;
 

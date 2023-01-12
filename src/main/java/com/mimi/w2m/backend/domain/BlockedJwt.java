@@ -2,7 +2,6 @@ package com.mimi.w2m.backend.domain;
 
 import lombok.Builder;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -19,19 +18,22 @@ import java.time.LocalDateTime;
  **/
 @Entity
 @Getter
-@NoArgsConstructor
 @Table(name = "blocked_jwt")
 public class BlockedJwt extends BaseTimeEntity {
     @Id
-    @Column(name = "token", unique = true, nullable = false, updatable = false)
+    @Column(name = "jwt_token", unique = true, nullable = false, updatable = false)
     String token;
 
-    @Column(name = "expired_date", nullable = false)
+    @Column(name = "expired_at", nullable = false)
     LocalDateTime expiredDate = LocalDateTime.of(1000, 1, 1, 0, 0, 0);
 
     @Builder
     public BlockedJwt(String token, LocalDateTime expiredDate) {
         this.token = token;
         this.expiredDate = expiredDate;
+    }
+
+    protected BlockedJwt() {
+        
     }
 }

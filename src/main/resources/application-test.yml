@@ -2,6 +2,8 @@ spring.config:
   activate:
     on-profile: test
 
+server.port: 8080
+
 spring:
   jpa:
     hibernate:
@@ -13,11 +15,12 @@ spring:
         use_sql_comments: true
         dialect: org.hibernate.dialect.MariaDB103Dialect
         connection.provider_disables_autocommit: false
-  session:
-    store-type: none
+  #    open-in-view: true # JPA의 영속성을 Transaction이 끝나도 유지한다(lazy loading을 service가 끝난 후(transaction 종료) controller에서 사용 가능) default: true
+
+
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3375/mimi?serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3374/mimi?serverTimezone=UTC&characterEncoding=UTF-8
     username: root
     password: 1123
     hikari:
@@ -28,11 +31,5 @@ spring:
 
 auth:
   token.secret: FkdyWJ/KOfcNnWZ7KOkEbxeayfXzyEsSMeag84VwAeM=
-  
 
-# Oauth 정보
-oauth2:
-  kakao:
-    client-id: 124124155cfeedfae5t513515dfe124d # 아무 값
-    client-secret: 7688f0f1gW4K577613568787890123ac2zd1z #아무 값
-    redirect-url: http://localhost:8080/api/v1/auth/oauth2/authorization/redirect/kakao
+

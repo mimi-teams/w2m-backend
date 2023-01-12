@@ -1,6 +1,6 @@
 package com.mimi.w2m.backend.repository;
 
-import com.mimi.w2m.backend.domain.type.Role;
+import com.mimi.w2m.backend.config.db.SpringDbConfig;
 import com.mimi.w2m.backend.domain.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +9,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
@@ -19,7 +22,10 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
  * @version 1.0.0
  * @since 2022/11/24
  **/
+@ActiveProfiles("test")
+@Import(SpringDbConfig.class) // For auditing
 @DataJpaTest
+@Transactional
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class UserRepositoryTest {
     static private final Logger logger = LoggerFactory.getLogger(UserRepositoryTest.class);

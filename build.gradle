@@ -26,6 +26,8 @@ dependencies {
 
     // Spring Data
     implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    // Object mapper 로 LocalDateTime 을 직렬화하기 위해 추가
+    implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.14.0'
 
     // DB Connector
     runtimeOnly "mysql:mysql-connector-java"

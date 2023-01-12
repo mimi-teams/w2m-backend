@@ -5,6 +5,7 @@ import org.springframework.data.util.Pair;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public record TimeRange(LocalTime beginTime,
                         LocalTime endTime) implements Comparable<TimeRange> {
@@ -32,6 +33,21 @@ public record TimeRange(LocalTime beginTime,
 
     public static TimeRange fixOrder(TimeRange range) {
         return range.beginTime.isBefore(range.endTime) ? range : new TimeRange(range.endTime, range.beginTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(beginTime, endTime);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (Objects.isNull(o) || !(o instanceof final TimeRange other)) {
+            return false;
+        } else {
+            return beginTime().equals(other.beginTime) &&
+                    endTime().equals(other.endTime);
+        }
     }
 
     @Override

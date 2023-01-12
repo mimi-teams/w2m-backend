@@ -1,5 +1,6 @@
 package com.mimi.w2m.backend.e2eTest.api.v1;
 
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.mimi.w2m.backend.domain.*;
 import com.mimi.w2m.backend.domain.type.ParticipleTime;
 import com.mimi.w2m.backend.dto.event.ColorDto;
@@ -55,6 +56,7 @@ public class EventApiTest extends End2EndTest {
     void 이벤트_등록() throws Exception {
         // given
         final User user = UserTestFixture.createUser();
+        objectMapper.registerModule(new JavaTimeModule());
         userRepository.save(user);
 
         final String token = login(user);
@@ -74,7 +76,6 @@ public class EventApiTest extends End2EndTest {
                 .description("테스트입니다람쥐")
                 .build();
 
-
         //when & then
         mockMvc.perform(
                         post("/v1/events")
@@ -86,7 +87,7 @@ public class EventApiTest extends End2EndTest {
                 .andExpect(jsonPath("$.data.event.id").exists())
                 .andExpect(jsonPath("$.data.event.title").value(requestDto.getTitle()))
                 .andExpect(jsonPath("$.data.event.color").value(requestDto.getColor().toString()))
-                .andExpect(jsonPath("$.data.event.dDay").exists())
+                .andExpect(jsonPath("$.data.event.dday").exists())
                 .andExpect(jsonPath("$.data.selectableParticipleTimes").exists())
         ;
     }
@@ -110,7 +111,7 @@ public class EventApiTest extends End2EndTest {
                 .andExpect(jsonPath("$.data.event.id").exists())
                 .andExpect(jsonPath("$.data.event.title").value(event.getTitle()))
                 .andExpect(jsonPath("$.data.event.color").value(event.getColor().toString()))
-                .andExpect(jsonPath("$.data.event.dDay").exists())
+                .andExpect(jsonPath("$.data.event.dday").exists())
                 .andExpect(jsonPath("$.data.selectableParticipleTimes").exists())
                 .andExpect(jsonPath("$.data.eventParticipants").exists())
         ;
@@ -154,7 +155,7 @@ public class EventApiTest extends End2EndTest {
                 .andExpect(jsonPath("$.data.event.id").exists())
                 .andExpect(jsonPath("$.data.event.title").value(requestDto.getTitle()))
                 .andExpect(jsonPath("$.data.event.color").value(requestDto.getColor().toString()))
-                .andExpect(jsonPath("$.data.event.dDay").exists())
+                .andExpect(jsonPath("$.data.event.dday").isEmpty())
                 .andExpect(jsonPath("$.data.selectableParticipleTimes").exists())
         ;
     }

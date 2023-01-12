@@ -1,4 +1,4 @@
-package com.mimi.w2m.backend.client.kakao.dto;
+package com.mimi.w2m.backend.client.kakao.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;

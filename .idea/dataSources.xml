@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="mimi@localhost" uuid="54d8c91f-cee9-40b0-9657-f70d6076490d">
+    <data-source source="LOCAL" name="@localhost" uuid="8401833e-0555-4f7f-b492-5e299581ea22">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3374/mimi?serverTimezone=UTC&amp;characterEncoding=UTF-8</jdbc-url>
+      <jdbc-url>jdbc:mysql://localhost:3374</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
+    <data-source source="LOCAL" name="@localhost [test]" uuid="6483b2d1-f921-41c1-8384-25a3b0d8a6ce">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://localhost:3375/mimi</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
   </component>

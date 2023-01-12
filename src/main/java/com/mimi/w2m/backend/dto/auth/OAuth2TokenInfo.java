@@ -1,7 +1,9 @@
 package com.mimi.w2m.backend.dto.auth;
 
-import com.mimi.w2m.backend.client.kakao.dto.KakaoTokenResponse;
-import com.mimi.w2m.backend.domain.type.OAuth2PlatformType;
+import com.mimi.w2m.backend.client.kakao.dto.token.KakaoTokenResponse;
+import com.mimi.w2m.backend.domain.Oauth2Token;
+import com.mimi.w2m.backend.domain.User;
+import com.mimi.w2m.backend.domain.type.PlatformType;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -18,7 +20,7 @@ import java.time.LocalDateTime;
 @Getter
 public class OAuth2TokenInfo {
 
-    private final OAuth2PlatformType platformType;
+    private final PlatformType platform;
 
     /**
      * 사용자 액세스 토큰 값
@@ -42,7 +44,7 @@ public class OAuth2TokenInfo {
 
     public static OAuth2TokenInfo of(KakaoTokenResponse tokenResponse) {
         return OAuth2TokenInfo.builder()
-                .platformType(OAuth2PlatformType.KAKAO)
+                .platform(PlatformType.KAKAO)
                 .accessToken(tokenResponse.getAccessToken())
                 .accessTokenExpires(LocalDateTime.now()
                         .plusSeconds(tokenResponse.getAccessTokenExpiresIn()))
@@ -52,4 +54,24 @@ public class OAuth2TokenInfo {
                 .build();
     }
 
+    public static OAuth2TokenInfo of(Oauth2Token oauth2Token) {
+        return OAuth2TokenInfo.builder()
+                .platform(oauth2Token.getPlatform())
+                .accessToken(oauth2Token.getAccessToken())
+                .accessTokenExpires(oauth2Token.getAccessTokenExpires())
+                .refreshToken(oauth2Token.getRefreshToken())
+                .refreshTokenExpires(oauth2Token.getRefreshTokenExpires())
+                .build();
+    }
+
+    public Oauth2Token to(User user) {
+        return Oauth2Token.builder()
+                .user(user)
+                .platform(platform)
+                .accessToken(accessToken)
+                .accessTokenExpires(accessTokenExpires)
+                .refreshToken(refreshToken)
+                .refreshTokenExpires(refreshTokenExpires)
+                .build();
+    }
 }

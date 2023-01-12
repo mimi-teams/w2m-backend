@@ -11,10 +11,10 @@ import com.mimi.w2m.backend.repository.BlockedJwtRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
-import java.util.Formatter;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -49,11 +49,11 @@ public class AuthService {
         }
     }
 
-    public void isInEvent(LoginInfo info, UUID eventId) throws IllegalAccessException {
+    public void isInEvent(CurrentUserInfo info, UUID eventId) throws IllegalAccessException {
         try {
-            eventParticipantService.get(eventId, info.loginId(), info.role());
+            eventParticipantService.get(eventId, info.userId(), info.role());
         } catch (RuntimeException e) {
-            final var msg = String.format("[AuthService] Illegal Access(id=%s, role=%s, event=%s)", info.loginId(),
+            final var msg = String.format("[AuthService] Illegal Access(id=%s, role=%s, event=%s)", info.userId(),
                     info.role(), eventId);
             throw new IllegalAccessException(msg);
         }

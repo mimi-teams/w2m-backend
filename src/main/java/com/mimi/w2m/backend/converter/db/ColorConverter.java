@@ -5,6 +5,8 @@ import com.mimi.w2m.backend.dto.event.ColorDto;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
+import java.awt.*;
+import java.util.Objects;
 
 /**
  * RoleConverter
@@ -18,11 +20,12 @@ public class ColorConverter implements AttributeConverter<ColorDto, String> {
 
     @Override
     public String convertToDatabaseColumn(ColorDto attribute) {
-        return attribute.toString();
+
+        return Objects.isNull(attribute) ? ColorDto.of(Color.PINK).toString() : attribute.toString();
     }
 
     @Override
     public ColorDto convertToEntityAttribute(String dbData) throws InvalidValueException {
-        return ColorDto.of(dbData);
+        return Objects.isNull(dbData) || dbData.isEmpty() ? ColorDto.of(Color.PINK) : ColorDto.of(dbData);
     }
 }

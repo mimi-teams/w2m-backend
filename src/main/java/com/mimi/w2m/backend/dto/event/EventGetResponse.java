@@ -36,14 +36,7 @@ public class EventGetResponse implements Serializable {
 
     public static EventGetResponse of(Event entity, Set<ParticipleTime> selectableParticipleTime, List<EventParticipantDto> eventParticipants) {
         final var responseDto = new EventGetResponse();
-        responseDto.event = EventDto.builder()
-                .id(entity.getId())
-                .hostId(entity.getHost().getId())
-                .title(entity.getTitle())
-                .dDay(entity.getDDay())
-                .color(entity.getColor())
-                .description(entity.getDescription())
-                .build();
+        responseDto.event = EventDto.of(entity);
         responseDto.selectableParticipleTimes = SelectableParticipleTimeDto.of(selectableParticipleTime);
         responseDto.eventParticipants = eventParticipants;
         return responseDto;

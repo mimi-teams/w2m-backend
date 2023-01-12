@@ -8,6 +8,7 @@ import com.mimi.w2m.backend.testFixtures.UserTestFixture;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -106,6 +107,7 @@ public class UserApiTest extends End2EndTest {
 
 
     @Test
+    @Transactional
     void 이용자_탈퇴() throws Exception {
         // given
         User user = userRepository.save(UserTestFixture.createUser("가나"));
